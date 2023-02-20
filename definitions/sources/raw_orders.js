@@ -1,6 +1,6 @@
 const scd = require("dataform-scd");
 
-scd("raw_orders_scd", {
+const { view, updates } = scd("raw_orders_scd", {
   uniqueKey: "id",
   timestamp: "updated_at",
   source: {
@@ -9,3 +9,7 @@ scd("raw_orders_scd", {
   },
   tags: ["scd"],
 });
+
+
+view.config({schema: dataform.projectConfig.vars.rawSchema});
+updates.config({schema: dataform.projectConfig.vars.rawSchema});
