@@ -1,4 +1,7 @@
-config { type: "table" }
+config { 
+    type: "table",
+    tags: ["daily"]
+}
 
 js {
     const payment_methods = ['credit_card', 'coupon', 'bank_transfer', 'gift_card'];

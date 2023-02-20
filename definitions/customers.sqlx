@@ -1,4 +1,7 @@
-config { type: "table" }
+config { 
+    type: "table",
+    tags: ["daily"]
+}
 
 with customers as (
 
