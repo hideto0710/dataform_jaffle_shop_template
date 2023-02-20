@@ -1,0 +1,58 @@
+config { type: "table" }
+
+js {
+    const payment_methods = ['credit_card', 'coupon', 'bank_transfer', 'gift_card'];
+    const payments_query = payment_methods.map((payment_method) => `
+        sum(case when payment_method = '${payment_method}' then amount else 0 end) as ${payment_method }_amount`
+    )
+    const final_query = payment_methods.map((payment_method) => `
+        order_payments.${payment_method}_amount`
+    )
+}
+
+with orders as (
+
+    select * from ${ref('stg_orders')}
+
+),
+
+payments as (
+
+    select * from ${ref('stg_payments')}
+
+),
+
+order_payments as (
+
+    select
+        order_id,
+        ${payments_query},
+
+        sum(amount) as total_amount
+
+    from payments
+
+    group by order_id
+
+),
+
+final as (
+
+    select
+        orders.order_id,
+        orders.customer_id,
+        orders.order_date,
+        orders.status,
+        ${final_query},
+
+        order_payments.total_amount as amount
+
+    from orders
+
+
+    left join order_payments
+        on orders.order_id = order_payments.order_id
+
+)
+
+select * from final
